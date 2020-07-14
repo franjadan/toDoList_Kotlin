@@ -1,4 +1,4 @@
-package com.example.todolist_recyclerview
+package com.example.todolist_recyclerview.Models
 
 import java.util.UUID
 

@@ -4,9 +4,13 @@ import android.content.Intent
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.todolist_recyclerview.Adapters.MyAdapter
+import com.example.todolist_recyclerview.Helpers.SwipeToDelete
+import com.example.todolist_recyclerview.Models.Task
+import com.example.todolist_recyclerview.Models.Tasks
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainActivity : AppCompatActivity() {
@@ -36,7 +40,10 @@ class MainActivity : AppCompatActivity() {
         //tasks.initTasks()
 
         viewManager = LinearLayoutManager(this)
-        viewAdapter = MyAdapter(tasks.tasks, this);
+        viewAdapter = MyAdapter(
+            tasks.tasks,
+            this
+        );
 
         recyclerView = findViewById<RecyclerView>(R.id.rv).apply {
             setHasFixedSize(true);
@@ -50,6 +57,25 @@ class MainActivity : AppCompatActivity() {
             val intent: Intent = Intent(this, AddTaskActivity::class.java)
             this.startActivityForResult(intent, REQUEST)
         }
+
+        val swipeHandler = object: SwipeToDelete(this) {
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+
+                //Elimino la tarea
+
+                tasks.removeTask(viewHolder.adapterPosition)
+
+                val editor = sharedPref.edit()
+
+                editor.putString("Tasks", Tasks.toJson(tasks))
+                editor.apply()
+
+                recyclerView.adapter!!.notifyDataSetChanged()
+            }
+        }
+
+        val itemTouchHelper: ItemTouchHelper = ItemTouchHelper(swipeHandler)
+        itemTouchHelper.attachToRecyclerView(recyclerView)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -60,7 +86,14 @@ class MainActivity : AppCompatActivity() {
                 val title = data.getStringExtra("Title")
                 val description = data.getStringExtra("Description")
 
-                tasks.addTask(Task(title!!, description!!))
+                //Añado la tarea
+
+                tasks.addTask(
+                    Task(
+                        title!!,
+                        description!!
+                    )
+                )
 
                 val editor = sharedPref.edit()
 

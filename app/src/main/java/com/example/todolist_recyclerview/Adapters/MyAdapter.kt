@@ -1,4 +1,4 @@
-package com.example.todolist_recyclerview
+package com.example.todolist_recyclerview.Adapters
 
 import android.content.Context
 import android.content.Intent
@@ -7,6 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.todolist_recyclerview.DetailActivity
+import com.example.todolist_recyclerview.R
+import com.example.todolist_recyclerview.Models.Task
 
 class MyAdapter(private val myDataset: MutableList<Task>, private val context: Context) : RecyclerView.Adapter<MyAdapter.MyViewHolder>() {
 
@@ -27,10 +30,12 @@ class MyAdapter(private val myDataset: MutableList<Task>, private val context: C
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyAdapter.MyViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val view: View = LayoutInflater.from(parent.context).inflate(R.layout.task, parent, false)
 
-        return MyViewHolder(view)
+        return MyViewHolder(
+            view
+        )
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
