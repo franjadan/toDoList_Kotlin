@@ -18,14 +18,17 @@ data class Tasks(val tasks: MutableList<Task>) {
         tasks.removeAt(position)
     }
 
-    fun toJson(): String {
-        val gson: Gson = Gson();
-        val json: String = gson.toJson(this);
-        return json;
-    }
+    //Funciones estáticas
+    companion object {
+        fun toJson(tasks: Tasks): String {
+            val gson: Gson = Gson();
+            val json: String = gson.toJson(tasks);
+            return json;
+        }
 
-    fun fromJson(json: String): Tasks {
-        val gson: Gson = Gson();
-        return gson.fromJson(json, Tasks::class.java);
+        fun fromJson(json: String): Tasks {
+            val gson: Gson = Gson();
+            return gson.fromJson(json, Tasks::class.java);
+        }
     }
 }

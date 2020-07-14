@@ -1,6 +1,7 @@
 package com.example.todolist_recyclerview
 
 import android.content.Intent
+import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -15,13 +16,24 @@ class MainActivity : AppCompatActivity() {
     private lateinit var tasks: Tasks
     private lateinit var fab: FloatingActionButton
     private val REQUEST: Int = 200
+    private lateinit var sharedPref: SharedPreferences
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        tasks = Tasks(ArrayList())
-        tasks.initTasks()
+        sharedPref = getSharedPreferences("Tasks", 0)
+
+        val sharedTasks = sharedPref.getString("Tasks", "")
+
+        if(sharedTasks != ""){
+            tasks = Tasks.fromJson(sharedTasks!!)
+        }else{
+            tasks = Tasks(ArrayList())
+        }
+
+        //tasks.initTasks()
 
         viewManager = LinearLayoutManager(this)
         viewAdapter = MyAdapter(tasks.tasks, this);
@@ -49,6 +61,12 @@ class MainActivity : AppCompatActivity() {
                 val description = data.getStringExtra("Description")
 
                 tasks.addTask(Task(title!!, description!!))
+
+                val editor = sharedPref.edit()
+
+                editor.putString("Tasks", Tasks.toJson(tasks))
+                editor.apply()
+
                 recyclerView.adapter!!.notifyDataSetChanged()
             }
         }
